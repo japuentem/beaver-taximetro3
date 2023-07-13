@@ -1,20 +1,163 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="title-container">
+    <div class="title-text">
+      <p>TAXIMETRO</p>
+    </div>
+  </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="datetime-container">
+    <div class="datetime-text"><p>{{ nuevaFecha }}</p></div>
+    <div class="datetime-text">
+      <p>{{ currentTime | date:'hh:mm:ss a' }}</p>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <ion-button
+      color="success"
+      expand="full"
+      (click)="iniciarViaje()"
+      [disabled]="viajeIniciado || viajeTerminado || !taxiSelected"
+    >
+      Iniciar
+    </ion-button>
+    <ion-button
+      color="danger"
+      expand="full"
+      (click)="terminarViaje()"
+      [disabled]="viajeTerminado || !viajeIniciado"
+    >
+      Terminar
+    </ion-button>
+    <ion-button
+      expand="full"
+      (click)="reiniciarTaximetro()"
+      [disabled]="viajeIniciado"
+    >
+      Reiniciar
+    </ion-button>
+  </div>
+
+  <div class="message-container">
+    <div class="message-text">
+      <p
+        class="message-location"
+        [ngStyle]="{ 'background-color': ubicacionActivada ? '#6ABAA4' : 'red', 'color': ubicacionActivada ? 'black' : 'white' }"
+      >
+        GPS
+      </p>
+      <p class="payment-label-right-top">
+        {{ tipoTarifa() ? 'DIURNO' : 'NOCTURNO'}}
+      </p>
+    </div>
+  </div>
+
+  <div class="cost-container">
+    <h2 class="cost-text">
+      <span class="tarifa-number" *ngIf="viajeIniciado"
+        >{{ obtenerNumeroTarifa() }}</span
+      >
+      <span class="costo-number"
+        >{{ viajeIniciado ? costo_viaje.toFixed(2) : 'libre' }}</span
+      >
+    </h2>
+    <div class="speed-container">
+      <div class="speed-text">velocidad {{ velocidad.toFixed(0) }} km/hr</div>
+    </div>
+  </div>
+
+  <div class="payment-container">
+    <div class="payment-text">
+      <p class="payment-label-left" *ngIf="viajeIniciado || viajeTerminado"></p>
+      <p
+        class="payment-label-right"
+        *ngIf="viajeIniciado || viajeTerminado"
+      ></p>
+      <div style="clear: both"></div>
+    </div>
+    <div class="payment-text">
+      <p class="payment-label-left">
+        Distancia <span *ngIf="cobroPorDistancia">*</span>
+      </p>
+      <p class="payment-label-right">
+        Tiempo <span *ngIf="cobroPorTiempo">*</span>
+      </p>
+      <div style="clear: both"></div>
+    </div>
+  </div>
+
+  <div class="radio-container">
+    <ion-list>
+      <ion-radio-group [(ngModel)]="taxiSelected" (ionChange)="onRadioSelect()">
+        <ion-list-header>
+          <ion-label class="label-radio-title"
+            >Tipo de taxi que abordo</ion-label
+          >
+        </ion-list-header>
+
+        <ion-item>
+          <ion-radio
+            class="label-radio"
+            value="libre"
+            [disabled]="viajeIniciado"
+            >Libre</ion-radio
+          >
+        </ion-item>
+        <ion-item>
+          <ion-radio
+            class="label-radio"
+            value="sitio"
+            [disabled]="viajeIniciado"
+            >Sitio</ion-radio
+          >
+        </ion-item>
+        <ion-item>
+          <ion-radio
+            class="label-radio"
+            value="radio_taxi"
+            [disabled]="viajeIniciado"
+            >Radio Taxi</ion-radio
+          >
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </div>
+
+  <div>
+    <ion-button class="debug-button" (click)="setDebug()"
+      >Debuge mode</ion-button
+    >
+  </div>
+
+  <div class="debug-container" *ngIf="debugMode">
+    <div class="debug-text">
+      <div class="coordinates-container">
+        <div class="coordinates-text">
+          Last: LAT ({{lastLatitude.toFixed(4)}}), LON
+          ({{lastLongitude.toFixed(4)}})
+        </div>
+        <div class="coordinates-text">
+          Current: LAT ({{currentLatitude.toFixed(4)}}), LON
+          ({{currentLongitude.toFixed(4)}}) ({{vecesPosicion}})
+        </div>
+        <div class="coordinates-text">
+          Distancia: {{distanciaRecorridaSegundo.toFixed(2)}} mts.
+          ({{vecesDistancia}})
+        </div>
+        <div class="coordinates-text">
+          Total: {{distanciaRecorridaTotal.toFixed(2)}} mts.
+        </div>
+        <div class="coordinates-text">Last: {{lastDistance}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="speedometer-container">
+    <div class="speedometer">
+      <div class="needle" [style.transform]="getSpeedometerRotation()"></div>
+    </div>
+    <div class="speedometer-text">
+      {{ velocidadSpeedometer.toFixed(0) }} km/hr
+    </div>
   </div>
 </ion-content>
