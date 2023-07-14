@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 export class TarifaService {
   lastUpdateTime: number = 0;
   taxiSelected: string | null = null;
+  tarifa: number = 0;
+  aumento: number = 0;
 
   constructor() {}
 
@@ -51,6 +53,8 @@ export class TarifaService {
         (currentHour >= 5 && currentHour < 22 ? 1 : 1.2);
     }
 
+    this.tarifa = tarifa;
+    this.aumento = aumento;
     return { tarifa, aumento };
   }
 
@@ -72,5 +76,9 @@ export class TarifaService {
       default:
         return 0; // Otra opción por defecto
     }
+  }
+
+  obtenerTarifaInicial(): number {
+    return this.tarifa; // Valor de la tarifa inicial
   }
 }

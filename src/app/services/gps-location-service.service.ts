@@ -5,6 +5,7 @@ import {
   PositionOptions,
   WatchPositionCallback,
 } from '@capacitor/geolocation';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,8 @@ import {
 export class GPSLocationService {
   currentLatitude: number = 0;
   currentLongitude: number = 0;
+  lastLatitude: number = 0;
+  lastLongitude: number = 0;
 
   constructor() {}
 
@@ -83,6 +86,50 @@ export class GPSLocationService {
     } else {
       return 0;
     }
+  }
+
+  startPositionUpdates(): Observable<{
+    lastLatitude: number;
+    lastLongitude: number;
+    currentLatitude: number;
+    currentLongitude: number;
+  }> {
+    return new Observable((observer) => {
+      const options: PositionOptions = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000,
+      };
+
+      const watchCallback: WatchPositionCallback = (
+        position: Position | null,
+        err?: any
+      ) => {
+        if (position && position.coords) {
+          const currentLatitude = position.coords.latitude;
+          const currentLongitude = position.coords.longitude;
+
+          const lastLatitude = this.lastLatitude || currentLatitude;
+          const lastLongitude = this.lastLongitude || currentLongitude;
+
+          observer.next({
+            lastLatitude: lastLatitude,
+            lastLongitude: lastLongitude,
+            currentLatitude: currentLatitude,
+            currentLongitude: currentLongitude,
+          });
+
+          this.lastLatitude = currentLatitude;
+          this.lastLongitude = currentLongitude;
+        }
+      };
+
+      const watchId = Geolocation.watchPosition(options, watchCallback) as any; // Agregar 'as any' para evitar el error de tipo
+
+      return () => {
+        Geolocation.clearWatch({ id: watchId.toString() });
+      };
+    });
   }
 
   degToRad(degrees: number): number {

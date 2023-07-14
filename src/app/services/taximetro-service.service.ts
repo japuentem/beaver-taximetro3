@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GPSLocationService } from './gps-location-service.service';
+import { TarifaService } from './tarifa-service.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,14 @@ export class TaximetroService {
   private currentLatitude: number = 0;
   private currentLongitude: number = 0;
   private lastDistance: number = 0;
+  private tarifa: number = 8.74;
+  private acumuladoPorTiempo: number = 15.4;
+  private acumuladoPorDistancia: number = 17.2;
 
-  constructor(private gpsLocationService: GPSLocationService) {}
+  constructor(
+    private gpsLocationService: GPSLocationService,
+    private tarifaService: TarifaService
+  ) {}
 
   iniciarViaje(): void {
     this.lastLatitude = 0;
@@ -65,5 +72,21 @@ export class TaximetroService {
     }
 
     return Number(this.lastDistance.toFixed(2));
+  }
+
+  calcularTotalAcumuladoTiempo() {
+    this.tarifa = this.tarifaService.tarifa;
+    this.acumuladoPorTiempo = this.tarifaService.aumento;
+    console.log('Total acumulado por tiempo:', this.tarifa);
+    console.log('Total acumulado por tiempo:', this.acumuladoPorTiempo);
+  }
+
+  calcularTotalAcumuladoDistancia() {
+    console.log('Total acumulado por distancia:', this.acumuladoPorDistancia);
+  }
+
+  calcularTotal() {
+    const total =
+      this.tarifa + this.acumuladoPorTiempo + this.acumuladoPorDistancia;
   }
 }

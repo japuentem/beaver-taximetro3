@@ -58,11 +58,20 @@
         >{{ obtenerNumeroTarifa() }}</span
       >
       <span class="costo-number"
-        >{{ viajeIniciado ? costo_viaje.toFixed(2) : 'libre' }}</span
+        >{{ viajeTerminado || viajeIniciado ? costo_viaje.toFixed(2) : 'libre'
+        }}</span
       >
     </h2>
     <div class="speed-container">
       <div class="speed-text">velocidad {{ velocidad.toFixed(0) }} km/hr</div>
+    </div>
+    <div *ngIf="viajeTerminado">
+      <app-detalle-viaje
+        [tarifa]="tarifa.toFixed(2)"
+        [acumuladoTiempo]="acumuladoTiempo.toFixed(2)"
+        [acumuladoDistancia]="acumuladoDistancia.toFixed(2)"
+        [total]="total.toFixed(2)"
+      ></app-detalle-viaje>
     </div>
   </div>
 
@@ -138,11 +147,10 @@
         </div>
         <div class="coordinates-text">
           Current: LAT ({{currentLatitude.toFixed(4)}}), LON
-          ({{currentLongitude.toFixed(4)}}) ({{vecesPosicion}})
+          ({{currentLongitude.toFixed(4)}})
         </div>
         <div class="coordinates-text">
           Distancia: {{distanciaRecorridaSegundo.toFixed(2)}} mts.
-          ({{vecesDistancia}})
         </div>
         <div class="coordinates-text">
           Total: {{distanciaRecorridaTotal.toFixed(2)}} mts.
@@ -152,6 +160,7 @@
     </div>
   </div>
 
+  <!--
   <div class="speedometer-container">
     <div class="speedometer">
       <div class="needle" [style.transform]="getSpeedometerRotation()"></div>
@@ -160,4 +169,5 @@
       {{ velocidadSpeedometer.toFixed(0) }} km/hr
     </div>
   </div>
+ -->
 </ion-content>

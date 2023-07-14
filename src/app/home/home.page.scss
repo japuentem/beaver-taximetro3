@@ -242,6 +242,20 @@ ion-radio {
   color: yellow;
 }
 
+.item-value {
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.total-label {
+  margin-top: 10px;
+}
+
+.total-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
 @font-face {
   font-family: "DIGITAL";
   src: url("../../assets/fonts/Oswald-VariableFont_wght.ttf");
@@ -270,7 +284,7 @@ ion-radio {
 }
 
 // Prueba
-
+/*
 .speedometer-container {
   display: flex;
   flex-direction: column;
@@ -305,3 +319,4 @@ ion-radio {
   font-size: 24px;
   font-weight: bold;
 }
+ */
